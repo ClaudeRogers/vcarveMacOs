@@ -1,4 +1,4 @@
-# VCarve for macOS — Architecture & Implementation Plan
+# ClaudeCarve for macOS — Architecture & Implementation Plan
 
 ## Overview
 
@@ -17,52 +17,52 @@ generate CNC toolpaths, and export G-code for CNC routers.
 ## Module Architecture
 
 ```
-VCarveApp (executable)
-  └── VCarveUI (SwiftUI views, document handling)
-        ├── VCarveCore (data models, types)
-        ├── VCarveGeometry (computational geometry)
-        ├── VCarveToolpath (toolpath algorithms)
-        ├── VCarveGCode (G-code generation)
-        └── VCarveIO (file import/export)
+ClaudeCarveApp (executable)
+  └── ClaudeCarveUI (SwiftUI views, document handling)
+        ├── ClaudeCarveCore (data models, types)
+        ├── ClaudeCarveGeometry (computational geometry)
+        ├── ClaudeCarveToolpath (toolpath algorithms)
+        ├── ClaudeCarveGCode (G-code generation)
+        └── ClaudeCarveIO (file import/export)
 ```
 
-### VCarveCore
+### ClaudeCarveCore
 Core data models shared across all modules:
 - `Vector2D`, `Vector3D` — Geometric primitives
 - `BoundingBox2D`, `BoundingBox3D` — Axis-aligned bounding boxes
-- `VectorPath`, `PathSegment` — 2D vector paths with lines, arcs, Béziers
+- `VectorPath`, `PathSegment` — 2D vector paths with lines, arcs, Beziers
 - `Tool`, `ToolType` — CNC tool definitions
 - `MaterialSetup` — Job/material configuration
 - `ToolpathConfig` — Toolpath operation parameters
 - `ComputedToolpath`, `ToolpathMove` — Generated toolpath data
-- `VCarveDocument` — Top-level document model
+- `ClaudeCarveDocument` — Top-level document model
 
-### VCarveGeometry
+### ClaudeCarveGeometry
 Computational geometry algorithms:
 - `PolygonOffset` — Inward/outward polygon offsetting for profile/pocket toolpaths
 - `MedialAxis` — Medial axis transform via distance field ridge detection (for V-carving)
 - `PolygonBoolean` — Union, intersection, difference (Sutherland-Hodgman clipping)
 
-### VCarveToolpath
+### ClaudeCarveToolpath
 Toolpath generation algorithms:
 - `ProfileToolpathGenerator` — Profile cutting (inside/outside/on-line) with tabs, lead-in/out, ramping
 - `PocketToolpathGenerator` — Interior clearing with offset, raster, spiral strategies
 - `VCarveToolpathGenerator` — V-carving via medial axis with variable-depth cuts
 - `DrillToolpathGenerator` — Drilling with peck drilling support
 
-### VCarveGCode
+### ClaudeCarveGCode
 G-code output:
-- `GCodeGenerator` — Converts `ComputedToolpath` → G-code string
+- `GCodeGenerator` — Converts `ComputedToolpath` to G-code string
 - `PostProcessor` — Machine-specific dialects (GRBL, Mach3, LinuxCNC, etc.)
 
-### VCarveIO
+### ClaudeCarveIO
 File import/export:
 - `SVGImporter` — Full SVG path data parser (M, L, C, Q, H, V, Z + shapes)
 - `DXFImporter` — DXF entity parser (LINE, CIRCLE, ARC, LWPOLYLINE)
 
-### VCarveUI
+### ClaudeCarveUI
 SwiftUI interface:
-- `VCarveDocumentView` — Main workspace (canvas, layer panel, toolpath list, properties)
+- `ClaudeCarveDocumentView` — Main workspace (canvas, layer panel, toolpath list, properties)
 - `MaterialSetupView` — Job setup dialog
 - `ToolDatabaseView` — Tool management
 - `ToolpathPreview3DView` — 3D SceneKit preview
@@ -148,10 +148,10 @@ Raster strategy: Scan-line intersection with polygon, zigzag passes
 
 ## File Format
 
-Documents are saved as JSON with the `.vcarve` extension, containing:
+Documents are saved as JSON with the `.claudecarve` extension, containing:
 - Material/job setup parameters
 - Layer structure
-- All vector paths (with Bézier curves, arcs)
+- All vector paths (with Bezier curves, arcs)
 - Tool database
 - Toolpath configurations
 

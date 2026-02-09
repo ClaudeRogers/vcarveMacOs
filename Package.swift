@@ -2,73 +2,73 @@
 import PackageDescription
 
 let package = Package(
-    name: "VCarveMacOs",
+    name: "ClaudeCarveMacOs",
     platforms: [
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "VCarve", targets: ["VCarveApp"]),
-        .library(name: "VCarveCore", targets: ["VCarveCore"]),
-        .library(name: "VCarveGeometry", targets: ["VCarveGeometry"]),
-        .library(name: "VCarveToolpath", targets: ["VCarveToolpath"]),
-        .library(name: "VCarveGCode", targets: ["VCarveGCode"]),
-        .library(name: "VCarveUI", targets: ["VCarveUI"]),
-        .library(name: "VCarveIO", targets: ["VCarveIO"]),
+        .executable(name: "ClaudeCarve", targets: ["ClaudeCarveApp"]),
+        .library(name: "ClaudeCarveCore", targets: ["ClaudeCarveCore"]),
+        .library(name: "ClaudeCarveGeometry", targets: ["ClaudeCarveGeometry"]),
+        .library(name: "ClaudeCarveToolpath", targets: ["ClaudeCarveToolpath"]),
+        .library(name: "ClaudeCarveGCode", targets: ["ClaudeCarveGCode"]),
+        .library(name: "ClaudeCarveUI", targets: ["ClaudeCarveUI"]),
+        .library(name: "ClaudeCarveIO", targets: ["ClaudeCarveIO"]),
     ],
     targets: [
         // Core data models and types
         .target(
-            name: "VCarveCore",
+            name: "ClaudeCarveCore",
             dependencies: []
         ),
         // Computational geometry: Voronoi, medial axis, polygon ops
         .target(
-            name: "VCarveGeometry",
-            dependencies: ["VCarveCore"]
+            name: "ClaudeCarveGeometry",
+            dependencies: ["ClaudeCarveCore"]
         ),
         // Toolpath generation algorithms
         .target(
-            name: "VCarveToolpath",
-            dependencies: ["VCarveCore", "VCarveGeometry"]
+            name: "ClaudeCarveToolpath",
+            dependencies: ["ClaudeCarveCore", "ClaudeCarveGeometry"]
         ),
         // G-code generation and post-processors
         .target(
-            name: "VCarveGCode",
-            dependencies: ["VCarveCore", "VCarveToolpath"]
+            name: "ClaudeCarveGCode",
+            dependencies: ["ClaudeCarveCore", "ClaudeCarveToolpath"]
         ),
         // File import/export (SVG, DXF, STL)
         .target(
-            name: "VCarveIO",
-            dependencies: ["VCarveCore", "VCarveGeometry"]
+            name: "ClaudeCarveIO",
+            dependencies: ["ClaudeCarveCore", "ClaudeCarveGeometry"]
         ),
         // SwiftUI-based macOS UI
         .target(
-            name: "VCarveUI",
+            name: "ClaudeCarveUI",
             dependencies: [
-                "VCarveCore",
-                "VCarveGeometry",
-                "VCarveToolpath",
-                "VCarveGCode",
-                "VCarveIO",
+                "ClaudeCarveCore",
+                "ClaudeCarveGeometry",
+                "ClaudeCarveToolpath",
+                "ClaudeCarveGCode",
+                "ClaudeCarveIO",
             ]
         ),
         // Main app executable
         .executableTarget(
-            name: "VCarveApp",
-            dependencies: ["VCarveUI"]
+            name: "ClaudeCarveApp",
+            dependencies: ["ClaudeCarveUI"]
         ),
         // Tests
         .testTarget(
-            name: "VCarveCoreTests",
-            dependencies: ["VCarveCore"]
+            name: "ClaudeCarveCoreTests",
+            dependencies: ["ClaudeCarveCore"]
         ),
         .testTarget(
-            name: "VCarveGeometryTests",
-            dependencies: ["VCarveGeometry"]
+            name: "ClaudeCarveGeometryTests",
+            dependencies: ["ClaudeCarveGeometry"]
         ),
         .testTarget(
-            name: "VCarveToolpathTests",
-            dependencies: ["VCarveToolpath"]
+            name: "ClaudeCarveToolpathTests",
+            dependencies: ["ClaudeCarveToolpath"]
         ),
     ]
 )
