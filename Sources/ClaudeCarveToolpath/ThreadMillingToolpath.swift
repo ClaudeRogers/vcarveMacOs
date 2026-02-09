@@ -193,9 +193,9 @@ public struct ThreadMillingToolpathGenerator: Sendable {
             let climbMilling = true // prefer climb milling for better finish
             var orbitCW: Bool
             if config.isInternal {
-                orbitCW = climbMilling ? false : true
+                orbitCW = !climbMilling
             } else {
-                orbitCW = climbMilling ? true : false
+                orbitCW = climbMilling
             }
             if config.direction == .leftHand {
                 orbitCW = !orbitCW

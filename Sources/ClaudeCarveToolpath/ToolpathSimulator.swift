@@ -364,7 +364,7 @@ public struct ToolpathSimulator: Sendable {
         let r = sqrt((start.x - cx) * (start.x - cx) + (start.y - cy) * (start.y - cy))
         guard r > 1e-9 else { return [end] }
 
-        var startAngle = atan2(start.y - cy, start.x - cx)
+        let startAngle = atan2(start.y - cy, start.x - cx)
         var endAngle = atan2(end.y - cy, end.x - cx)
 
         // Determine sweep direction.

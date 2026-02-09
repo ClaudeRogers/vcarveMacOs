@@ -7,7 +7,6 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "ClaudeCarve", targets: ["ClaudeCarveApp"]),
         .library(name: "ClaudeCarveCore", targets: ["ClaudeCarveCore"]),
         .library(name: "ClaudeCarveGeometry", targets: ["ClaudeCarveGeometry"]),
         .library(name: "ClaudeCarveToolpath", targets: ["ClaudeCarveToolpath"]),
@@ -51,11 +50,6 @@ let package = Package(
                 "ClaudeCarveGCode",
                 "ClaudeCarveIO",
             ]
-        ),
-        // Main app executable
-        .executableTarget(
-            name: "ClaudeCarveApp",
-            dependencies: ["ClaudeCarveUI"]
         ),
         // Tests
         .testTarget(
