@@ -57,16 +57,30 @@ Toolpath generation algorithms:
 - `PocketToolpathGenerator` — Interior clearing with offset, raster, spiral strategies
 - `VCarveToolpathGenerator` — V-carving via medial axis with variable-depth cuts
 - `DrillToolpathGenerator` — Drilling with peck drilling support
+- `FlutingToolpath` — Fluting with ramp-in/out depth control
+- `TextureToolpath` — Surface textures (crosshatch, diamond, wave, random, basket weave)
+- `PrismToolpath` — Raised lettering/prism carving with angle-based depth
+- `ThreadMillingToolpath` — Internal/external thread milling with helical interpolation
+- `ThreeDToolpath` — 3D roughing/finishing (raster, offset, adaptive, waterline, spiral, pencil)
+- `PhotoVCarveToolpath` — Photo engraving (horizontal, vertical, crosshatch, diagonal, stipple, spiral)
+- `InlayToolpath` — Auto-inlay generation (standard, backer, V-bit pocket + plug + registration)
+- `ToolpathTilingMerging` — Tiling for oversized jobs + nearest-neighbor merge optimization
+- `RotaryDoubleSided` — Wrapped rotary axis + double-sided machining with registration
+- `ProductionPlateEngraving` — CSV merge engraving with single-stroke Hershey font
 
 ### ClaudeCarveGCode
 G-code output:
 - `GCodeGenerator` — Converts `ComputedToolpath` to G-code string
 - `PostProcessor` — Machine-specific dialects (GRBL, Mach3, LinuxCNC, etc.)
+- `PluginSystem` — Gadget/plugin extensibility (JSON definitions, parameter types, built-in plugins)
+- `CustomPostProcessor` — Template-based post-processor editor with variable substitution and presets
 
 ### ClaudeCarveIO
 File import/export:
 - `SVGImporter` — Full SVG path data parser (M, L, C, Q, H, V, Z + shapes)
 - `DXFImporter` — DXF entity parser (LINE, CIRCLE, ARC, LWPOLYLINE)
+- `ModelImporter` — 3D model import (STL binary/ASCII, OBJ with ray-triangle heightmap)
+- `JobSetupSheet` — PDF job setup sheet generation (CGContext/CoreText rendering)
 
 ### ClaudeCarveUI
 SwiftUI interface:
@@ -122,17 +136,17 @@ SwiftUI interface:
 - [x] Snap to grid, guidelines, object snapping (9 snap types)
 
 ### Phase 4 — Advanced Features
-- [ ] PhotoVCarve (photograph to depth-mapped engraving)
-- [ ] Auto-inlay generation
-- [ ] Toolpath tiling for oversized jobs
-- [ ] Toolpath merging and optimization
-- [ ] Wrapped rotary axis support
-- [ ] Double-sided machining
-- [ ] Production plate engraving (CSV merge)
-- [ ] Job setup sheets (PDF export)
-- [ ] 3D model import (STL, OBJ)
-- [ ] Gadget/plugin extensibility system
-- [ ] Custom post-processor editor
+- [x] PhotoVCarve (6 strategies: horizontal, vertical, crosshatch, diagonal, stipple, spiral)
+- [x] Auto-inlay generation (standard + backer, V-bit pocket + plug + registration)
+- [x] Toolpath tiling for oversized jobs (grid, zigzag, spiral with overlap)
+- [x] Toolpath merging and optimization (nearest-neighbor rapid reordering, time estimation)
+- [x] Wrapped rotary axis support (flat-to-cylinder coordinate mapping)
+- [x] Double-sided machining (flip axis, registration holes/marks)
+- [x] Production plate engraving (CSV merge with single-stroke Hershey font)
+- [x] Job setup sheets (PDF export with CGContext/CoreText rendering)
+- [x] 3D model import (STL binary/ASCII, OBJ with ray-triangle heightmap)
+- [x] Gadget/plugin extensibility system (JSON plugin definitions, parameter types)
+- [x] Custom post-processor editor (template variables, modal optimization, presets)
 
 ## Key Algorithms
 
