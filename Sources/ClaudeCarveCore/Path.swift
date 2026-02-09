@@ -139,6 +139,59 @@ public struct VectorPath: Identifiable, Hashable, Codable, Sendable {
         return path
     }
 
+    /// Transform all points in the path by applying a function.
+    public func mapPoints(_ transform: (Vector2D) -> Vector2D) -> VectorPath {
+        var result = VectorPath(id: id, startPoint: transform(startPoint), isClosed: isClosed)
+        for segment in segments {
+            switch segment {
+            case .lineTo(let p):
+                result.segments.append(.lineTo(transform(p)))
+            case .quadTo(let c, let end):
+                result.segments.append(.quadTo(control: transform(c), end: transform(end)))
+            case .cubicTo(let c1, let c2, let end):
+                result.segments.append(.cubicTo(control1: transform(c1), control2: transform(c2), end: transform(end)))
+            case .arcTo(let center, let radius, let startAngle, let endAngle, let clockwise):
+                result.segments.append(.arcTo(center: transform(center), radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: clockwise))
+            }
+        }
+        return result
+    }
+
+    /// Translate (move) the path by the given offset.
+    public func translated(by offset: Vector2D) -> VectorPath {
+        mapPoints { $0 + offset }
+    }
+
+    /// Scale the path uniformly around a center point.
+    public func scaled(by factor: Double, around center: Vector2D) -> VectorPath {
+        mapPoints { center + ($0 - center) * factor }
+    }
+
+    /// Closest point on the path to the given point (approximate via flattening).
+    public func closestPoint(to target: Vector2D, tolerance: Double = 0.1) -> (point: Vector2D, distance: Double)? {
+        let pts = flattenedPoints(tolerance: tolerance)
+        guard pts.count >= 2 else { return nil }
+
+        var bestDist = Double.infinity
+        var bestPoint = target
+
+        for i in 0..<(pts.count - 1) {
+            let a = pts[i], b = pts[i + 1]
+            let ab = b - a
+            let lenSq = ab.lengthSquared
+            if lenSq < 1e-12 { continue }
+            let t = max(0, min(1, (target - a).dot(ab) / lenSq))
+            let proj = a + ab * t
+            let dist = target.distance(to: proj)
+            if dist < bestDist {
+                bestDist = dist
+                bestPoint = proj
+            }
+        }
+
+        return (bestPoint, bestDist)
+    }
+
     // MARK: - Bézier helpers
 
     private static func quadraticBezier(p0: Vector2D, p1: Vector2D, p2: Vector2D, t: Double) -> Vector2D {

@@ -39,9 +39,17 @@ Core data models shared across all modules:
 
 ### ClaudeCarveGeometry
 Computational geometry algorithms:
-- `PolygonOffset` — Inward/outward polygon offsetting for profile/pocket toolpaths
+- `PolygonOffset` — Inward/outward polygon offsetting with self-intersection resolution
 - `MedialAxis` — Medial axis transform via distance field ridge detection (for V-carving)
-- `PolygonBoolean` — Union, intersection, difference (Sutherland-Hodgman clipping)
+- `PolygonBoolean` — Union, intersection, difference (Weiler-Atherton algorithm)
+- `VoronoiDiagram` — Fortune's sweep line Voronoi computation
+- `ShapeNesting` — Bottom-Left Fill nesting for material optimization
+- `NodeEditor` — Vector node editing (move, add, delete, convert control points)
+- `TextCreation` — Text-to-vector via CoreText glyph outlines, text on curve
+- `VectorTransforms` — Affine transforms, scale/rotate/mirror/array/align/distribute
+- `VectorOperations` — Welding, trimming, filleting, chamfering, path joining, validation
+- `ImageTracing` — Bitmap-to-vector tracing (threshold, contour, Bezier fitting)
+- `SnapSystem` — Grid, endpoint, midpoint, center, intersection, guideline snapping
 
 ### ClaudeCarveToolpath
 Toolpath generation algorithms:
@@ -91,27 +99,27 @@ SwiftUI interface:
 - [x] Unit tests for core types and toolpath generation
 
 ### Phase 2 — Enhanced Algorithms
-- [ ] Voronoi diagram computation (replace distance field with proper Voronoi)
-- [ ] Robust polygon boolean operations (Weiler-Atherton)
-- [ ] Improved polygon offset (handle self-intersections properly)
-- [ ] True shape nesting for material optimization
-- [ ] Toolpath simulation (material removal heightfield)
-- [ ] Fluting toolpath
-- [ ] Texture toolpath
-- [ ] Prism (raised lettering) toolpath
-- [ ] Thread milling toolpath
-- [ ] 3D roughing/finishing toolpaths
+- [x] Voronoi diagram computation (Fortune's sweep line algorithm)
+- [x] Robust polygon boolean operations (Weiler-Atherton)
+- [x] Improved polygon offset (handle self-intersections properly)
+- [x] True shape nesting for material optimization (Bottom-Left Fill)
+- [x] Toolpath simulation (material removal heightfield)
+- [x] Fluting toolpath
+- [x] Texture toolpath
+- [x] Prism (raised lettering) toolpath
+- [x] Thread milling toolpath
+- [x] 3D roughing/finishing toolpaths (raster, offset, adaptive, waterline, spiral, pencil)
 
 ### Phase 3 — Design Tools
-- [ ] Interactive vector drawing (mouse-based creation)
-- [ ] Node editing (move, add, delete control points)
-- [ ] Text creation with TrueType/OpenType fonts
-- [ ] Text on curve
-- [ ] Vector transform tools (scale, rotate, mirror, array)
-- [ ] Vector welding, trimming, filleting
-- [ ] Vector validation (overlap/intersection detection)
-- [ ] Image tracing (bitmap to vector conversion)
-- [ ] Snap to grid, guidelines, object snapping
+- [x] Interactive vector drawing (mouse-based creation)
+- [x] Node editing (move, add, delete, convert control points)
+- [x] Text creation with TrueType/OpenType fonts (CoreText glyph extraction)
+- [x] Text on curve
+- [x] Vector transform tools (affine transforms, scale, rotate, mirror, array, align, distribute)
+- [x] Vector welding, trimming, filleting, chamfering
+- [x] Vector validation (self-intersection, overlap, winding order detection)
+- [x] Image tracing (bitmap to vector conversion with Potrace-style algorithm)
+- [x] Snap to grid, guidelines, object snapping (9 snap types)
 
 ### Phase 4 — Advanced Features
 - [ ] PhotoVCarve (photograph to depth-mapped engraving)

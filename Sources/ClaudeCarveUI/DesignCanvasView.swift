@@ -44,6 +44,7 @@ public struct DesignCanvasView: NSViewRepresentable {
         Coordinator(self)
     }
 
+    @MainActor
     public class Coordinator: NSObject, CanvasDelegate {
         var parent: DesignCanvasView
 
@@ -69,6 +70,7 @@ public struct DesignCanvasView: NSViewRepresentable {
     }
 }
 
+@MainActor
 public protocol CanvasDelegate: AnyObject {
     func canvasDidSelectPaths(_ pathIDs: Set<UUID>)
     func canvasDidAddPath(_ path: VectorPath)
