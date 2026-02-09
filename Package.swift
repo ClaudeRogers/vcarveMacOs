@@ -70,5 +70,13 @@ let package = Package(
             name: "ClaudeCarveToolpathTests",
             dependencies: ["ClaudeCarveToolpath"]
         ),
+        .testTarget(
+            name: "ClaudeCarveGCodeTests",
+            dependencies: ["ClaudeCarveGCode"]
+        ),
+        .testTarget(
+            name: "ClaudeCarveIOTests",
+            dependencies: ["ClaudeCarveIO"]
+        ),
     ]
 )
