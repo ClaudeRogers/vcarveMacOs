@@ -7,23 +7,48 @@ A macOS-native CNC design and toolpath generation application built with Swift a
 ### Vector Design
 - **Drawing tools**: Line, rectangle, circle, ellipse, polygon, arc
 - **Interactive canvas** with zoom, pan, grid, snap, and crosshair cursor
+- **Node editing**: Move, add, delete, and convert control points (smooth/corner/symmetric handles)
+- **Text creation**: TrueType/OpenType font rendering via CoreText glyph extraction, text on curve
+- **Vector transforms**: Scale, rotate, mirror, shear, array (linear/circular/grid), align, distribute
+- **Vector operations**: Welding, trimming, filleting, chamfering, path joining, validation
+- **Image tracing**: Bitmap-to-vector conversion (threshold, contour detection, Bezier fitting)
+- **Snap system**: 9 snap types (grid, endpoint, midpoint, center, intersection, nearest, guideline, tangent, perpendicular)
 - **Layer management** with visibility and lock controls
-- **File import**: SVG (full path data parser) and DXF (LINE, CIRCLE, ARC, LWPOLYLINE)
-- **Vector operations**: Bézier curves, arcs, and polylines with adaptive flattening
+- **File import**: SVG, DXF, STL (binary/ASCII), OBJ (with heightmap generation)
+- **Boolean operations**: Union, intersection, difference (Weiler-Atherton algorithm)
 
 ### Toolpath Generation
-- **Profile (contour)** — Cut along or around vectors with inside/outside/on-line options, tabs, lead-in/lead-out arcs, and ramping (straight, helical, profile ramp)
-- **Pocket** — Clear interior regions using offset (concentric) or raster (zigzag) strategies with configurable stepover
-- **V-Carve** — The signature algorithm. Uses a medial axis transform to compute variable-depth cuts with a V-bit, producing beautiful carved lettering and designs. Supports flat-bottom V-carving with secondary clearing tools
-- **Drilling** — Single and peck drilling with configurable retract height and dwell time
-- **Fluting** — Tapered groove cutting with smooth ramp-in/ramp-out using Hermite interpolation
-- **Texture** — Decorative surface textures (parallel, crosshatch, stipple, wave) with randomized depth variation
+- **Profile (contour)** — Inside/outside/on-line cutting with tabs, lead-in/out arcs, and ramping
+- **Pocket** — Interior clearing with offset, raster, and spiral strategies
+- **V-Carve** — Medial axis variable-depth cuts for carved lettering and designs
+- **Drilling** — Single and peck drilling with configurable retract and dwell
+- **Fluting** — Tapered grooves with Hermite interpolation ramp-in/out
+- **Texture** — Surface textures (crosshatch, diamond, wave, random, basket weave)
+- **Prism** — Raised lettering/prism carving with angle-based depth
+- **Thread milling** — Internal/external threads with helical interpolation
+- **3D roughing/finishing** — Raster, offset, adaptive, waterline, spiral, and pencil strategies
+- **PhotoVCarve** — Photo engraving with 6 strategies (horizontal, vertical, crosshatch, diagonal, stipple, spiral)
+- **Auto-inlay** — Standard + backer inlay generation with V-bit pocket, plug, and registration
+- **Toolpath tiling** — Grid, zigzag, spiral tiling for oversized jobs with overlap
+- **Toolpath merging** — Nearest-neighbor rapid reordering and time estimation
+- **Production plate engraving** — CSV merge with single-stroke Hershey font for batch work
+
+### Advanced Machining
+- **Rotary axis** — Flat-to-cylinder coordinate wrapping for rotary CNC
+- **Double-sided machining** — Flip axis support with registration holes and alignment marks
+- **Toolpath simulation** — Material removal heightfield visualization
 
 ### G-Code Output
 - **11 post-processor definitions**: GRBL, Mach3/4, LinuxCNC, UCCNC, Carbide Motion, Fanuc, Haas, ShopBot, and generic G-code
+- **Custom post-processor editor** — Template variables, modal optimization, and presets
+- **Plugin/gadget system** — JSON-based extensibility with parameter types and built-in plugins
 - Modal G-code optimization (only outputs changed commands)
-- Configurable decimal precision, line numbering, and comments
 - Multi-toolpath export with automatic tool changes
+
+### Output & Export
+- **G-code export** with configurable precision, line numbering, and comments
+- **PDF job setup sheets** — Material info, tool list, toolpath summary (CGContext/CoreText rendering)
+- **3D model import** — STL binary/ASCII and OBJ with ray-triangle heightmap generation
 - Copy to clipboard or save to file
 
 ### 3D Preview
@@ -62,10 +87,10 @@ ClaudeCarveApp (executable)
 | Module | Purpose |
 |--------|---------|
 | **ClaudeCarveCore** | Vector2D/3D, BoundingBox, VectorPath, Tool, MaterialSetup, ToolpathConfig, ComputedToolpath, ClaudeCarveDocument |
-| **ClaudeCarveGeometry** | PolygonOffset, MedialAxis (distance field ridge detection), PolygonBoolean (Sutherland-Hodgman clipping) |
-| **ClaudeCarveToolpath** | ProfileToolpath, PocketToolpath, VCarveToolpath, DrillToolpath, FlutingToolpath, TextureToolpath generators |
-| **ClaudeCarveGCode** | GCodeGenerator (with modal optimization), PostProcessor (11 machine dialects) |
-| **ClaudeCarveIO** | SVGImporter (paths + shapes), DXFImporter (entities) |
+| **ClaudeCarveGeometry** | PolygonOffset, MedialAxis, PolygonBoolean, VoronoiDiagram, ShapeNesting, NodeEditor, TextCreation, VectorTransforms, VectorOperations, ImageTracing, SnapSystem |
+| **ClaudeCarveToolpath** | Profile, Pocket, VCarve, Drill, Fluting, Texture, Prism, ThreadMilling, 3D, PhotoVCarve, Inlay, Tiling/Merging, Rotary/DoubleSided, ProductionPlate |
+| **ClaudeCarveGCode** | GCodeGenerator, PostProcessor (11 dialects), PluginSystem, CustomPostProcessor |
+| **ClaudeCarveIO** | SVGImporter, DXFImporter, ModelImporter (STL/OBJ), JobSetupSheet (PDF) |
 | **ClaudeCarveUI** | ClaudeCarveDocumentView, DesignCanvasView (NSView), MaterialSetupView, ToolDatabaseView, GCodeExportView, ToolpathPreview3DView |
 | **ClaudeCarveApp** | Main app entry point, menus, settings |
 
@@ -100,7 +125,7 @@ Two strategies:
 
 ### Requirements
 - macOS 14.0+
-- Xcode 15+ or Swift 5.9+
+- Xcode 16+ or Swift 6.0+
 - No external dependencies
 
 ### Build & Run
@@ -141,23 +166,42 @@ ClaudeCarveMacOs/
 │   │   ├── Toolpath.swift                 # Computed toolpath moves
 │   │   ├── ToolpathConfig.swift           # Toolpath operation parameters
 │   │   └── Document.swift                 # Top-level document model
-│   ├── ClaudeCarveGeometry/               # Computational geometry
+│   ├── ClaudeCarveGeometry/               # Computational geometry (11 modules)
 │   │   ├── PolygonOffset.swift            # Polygon inward/outward offset
 │   │   ├── MedialAxis.swift               # Medial axis transform
-│   │   └── PolygonBoolean.swift           # Boolean operations on polygons
-│   ├── ClaudeCarveToolpath/               # Toolpath generators
+│   │   ├── PolygonBoolean.swift           # Boolean operations (Weiler-Atherton)
+│   │   ├── VoronoiDiagram.swift           # Fortune's sweep line Voronoi
+│   │   ├── ShapeNesting.swift             # Bottom-Left Fill nesting
+│   │   ├── NodeEditor.swift               # Vector node editing
+│   │   ├── TextCreation.swift             # CoreText glyph extraction, text on curve
+│   │   ├── VectorTransforms.swift         # Affine transforms, array, align, distribute
+│   │   ├── VectorOperations.swift         # Weld, trim, fillet, chamfer, join
+│   │   ├── ImageTracing.swift             # Bitmap-to-vector (Potrace-style)
+│   │   └── SnapSystem.swift               # 9 snap types + guidelines
+│   ├── ClaudeCarveToolpath/               # Toolpath generators (14 modules)
 │   │   ├── ProfileToolpath.swift          # Profile/contour cutting
 │   │   ├── PocketToolpath.swift           # Pocket clearing
 │   │   ├── VCarveToolpath.swift           # V-carving (medial axis)
 │   │   ├── DrillToolpath.swift            # Drilling
 │   │   ├── FlutingToolpath.swift          # Fluting (tapered grooves)
-│   │   └── TextureToolpath.swift          # Surface textures
+│   │   ├── TextureToolpath.swift          # Surface textures
+│   │   ├── PrismToolpath.swift            # Prism / raised lettering
+│   │   ├── ThreadMillingToolpath.swift    # Thread milling (helical)
+│   │   ├── ThreeDToolpath.swift           # 3D roughing/finishing
+│   │   ├── PhotoVCarveToolpath.swift      # Photo engraving (6 strategies)
+│   │   ├── InlayToolpath.swift            # Auto-inlay generation
+│   │   ├── ToolpathTilingMerging.swift    # Tiling + merge optimization
+│   │   ├── RotaryDoubleSided.swift        # Rotary axis + double-sided
+│   │   └── ProductionPlateEngraving.swift # CSV merge batch engraving
 │   ├── ClaudeCarveGCode/                  # G-code output
 │   │   ├── GCodeGenerator.swift           # Toolpath → G-code conversion
-│   │   └── PostProcessor.swift            # Machine-specific dialects
+│   │   ├── PostProcessor.swift            # Machine-specific dialects
+│   │   └── PluginSystem.swift             # Plugin system + post-processor editor
 │   ├── ClaudeCarveIO/                     # File I/O
 │   │   ├── SVGImporter.swift              # SVG file parser
-│   │   └── DXFImporter.swift              # DXF file parser
+│   │   ├── DXFImporter.swift              # DXF file parser
+│   │   ├── ModelImporter.swift            # STL/OBJ 3D model import
+│   │   └── JobSetupSheet.swift            # PDF setup sheet generation
 │   └── ClaudeCarveUI/                     # SwiftUI interface
 │       ├── ClaudeCarveDocumentView.swift   # Main workspace
 │       ├── ClaudeCarveAppDocument.swift    # Document model for SwiftUI
@@ -179,11 +223,14 @@ ClaudeCarveMacOs/
 |--------|-----------|-------------------|
 | SVG | .svg | `<path>` (M, L, H, V, C, Q, Z), `<rect>`, `<circle>`, `<line>`, `<polyline>`, `<polygon>` |
 | DXF | .dxf | LINE, CIRCLE, ARC, LWPOLYLINE |
+| STL | .stl | Binary and ASCII triangle mesh (converted to heightmap) |
+| OBJ | .obj | Wavefront OBJ with ray-triangle intersection heightmap |
 
 ### Export
 | Format | Extension | Description |
 |--------|-----------|-------------|
 | G-code | .gcode, .nc, .tap, .ngc | CNC machine instructions |
+| PDF | .pdf | Job setup sheets (material, tools, toolpaths) |
 | ClaudeCarve | .claudecarve | Native project format (JSON) |
 
 ## Supported CNC Controllers
